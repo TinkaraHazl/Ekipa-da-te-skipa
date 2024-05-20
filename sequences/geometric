@@ -1,0 +1,24 @@
+pub struct Geometric {
+    start: f64,
+    quot: f64,
+}
+
+impl Geometric {
+    pub fn new(start: f64, quot: f64) -> Box<Geometric> {
+        Box::new(Geometric { start, quot })
+    }
+
+    pub fn k_th(&self, k: usize) -> f64 {
+        self.start  (k as f64) * self.quot.powi(2)
+    }
+
+    pub fn range(&self, range: Range) -> Vec<f64> {
+        let mut result = Vec::new();
+        let mut k = range.from;
+        while k <= range.to {
+            result.push(self.k_th(k as usize));
+            k *= range.quot;
+        }
+        result
+    }
+}
