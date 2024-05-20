@@ -58,6 +58,10 @@ pub struct Arithmetic {
     step: f64,
 }
 
+pub struct Constant {
+    
+}
+
 impl Arithmetic {
     pub fn new(start: f64, step: f64) -> Box<Arithmetic> {
         Box::new(Arithmetic { start, step })
