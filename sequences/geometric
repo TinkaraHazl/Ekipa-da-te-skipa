@@ -9,7 +9,7 @@ impl Geometric {
     }
 
     pub fn k_th(&self, k: usize) -> f64 {
-        self.start  (k as f64) * self.quot.powi(2)
+        self.start * self.quot.powi(k as i32)
     }
 
     pub fn range(&self, range: Range) -> Vec<f64> {
@@ -17,7 +17,7 @@ impl Geometric {
         let mut k = range.from;
         while k <= range.to {
             result.push(self.k_th(k as usize));
-            k *= range.quot;
+            k = k * range.quot();
         }
         result
     }
