@@ -1,3 +1,6 @@
+use crate::Range;
+
+
 pub struct Geometric {
     start: f64,
     quot: f64,
@@ -14,10 +17,10 @@ impl Geometric {
 
     pub fn range(&self, range: Range) -> Vec<f64> {
         let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
+        let mut k: f64 = range.from as f64;
+        while k <= range.to as f64 {
             result.push(self.k_th(k as usize));
-            k = k * range.quot();
+            k = k * self.quot;
         }
         result
     }

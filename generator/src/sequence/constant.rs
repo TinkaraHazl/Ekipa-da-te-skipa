@@ -1,3 +1,5 @@
+use crate::Range;
+
 pub struct Constant {
     value: f64,
 }
