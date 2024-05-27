@@ -84,6 +84,56 @@ impl Arithmetic {
     }
 }
 
+pub struct Constant {
+    value: f64,
+}
+
+impl Constant {
+    pub fn new(value: f64) -> Box<Constant> {
+        Box::new(Constant { value })
+    }
+
+    pub fn k_th(&self, k: usize) -> f64 {
+        self.value
+    }
+
+    pub fn range(&self, range: Range) -> Vec<f64> {
+        let mut result = Vec::new();
+        let mut k = range.from;
+        while k <= range.to {
+            result.push(self.value);
+        }
+        result
+    }
+}
+
+pub struct Geometric {
+    start: f64,
+    quot: f64,
+}
+
+impl Geometric {
+    pub fn new(start: f64, quot: f64) -> Box<Geometric> {
+        Box::new(Geometric { start, quot })
+    }
+
+    pub fn k_th(&self, k: usize) -> f64 {
+        self.start * self.quot.powi(k as i32)
+    }
+
+    pub fn range(&self, range: Range) -> Vec<f64> {
+        let mut result = Vec::new();
+        let mut k = range.from;
+        while k <= range.to {
+            result.push(self.k_th(k as usize));
+            k = k * range.quot();
+        }
+        result
+    }
+}
+
+
+
 fn sequences() -> Vec<SequenceInfo> {
     let mut sequences = Vec::new();
     sequences.push(SequenceInfo {
