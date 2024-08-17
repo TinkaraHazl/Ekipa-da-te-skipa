@@ -1,3 +1,5 @@
+use crate::Range;
+
 pub struct Arithmetic {
     start: f64,
     step: f64,

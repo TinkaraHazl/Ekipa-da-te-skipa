@@ -14,8 +14,16 @@ use serde::{Deserialize, Serialize};
 
 const PORT: u16 = 12345;
 
-pub mod expression;
 pub mod sequence;
+
+use sequence::geometric::Geometric;
+use sequence::arithmetic::Arithmetic;
+use sequence::constant::Constant;
+use sequence::sum::Sum;
+
+fn a() {
+    let k = Geometric::new(1.1,2.);
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
@@ -53,37 +61,87 @@ pub struct SequenceInfo {
     sequences: u32,
 }
 
-pub struct Arithmetic {
-    start: f64,
-    step: f64,
-}
-
-pub struct Constant {
-    
-}
-
-
-
-impl Arithmetic {
-    pub fn new(start: f64, step: f64) -> Box<Arithmetic> {
-        Box::new(Arithmetic { start, step })
-    }
-
-    pub fn k_th(&self, k: usize) -> f64 {
-        self.start + (k as f64) * self.step
-    }
-
-    pub fn range(&self, range: Range) -> Vec<f64> {
-        let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
-            result.push(self.k_th(k as usize));
-            k += range.step;
-        }
-        result
-    }
-}
-
+// pub struct Arithmetic {
+//     start: f64,
+//     step: f64,
+// }
+// 
+// pub struct Constant {
+//     
+// }
+// 
+// 
+// 
+// impl Arithmetic {
+//     pub fn new(start: f64, step: f64) -> Box<Arithmetic> {
+//         Box::new(Arithmetic { start, step })
+//     }
+// 
+//     pub fn k_th(&self, k: usize) -> f64 {
+//         self.start + (k as f64) * self.step
+//     }
+// 
+//     pub fn range(&self, range: Range) -> Vec<f64> {
+//         let mut result = Vec::new();
+//         let mut k = range.from;
+//         while k <= range.to {
+//             result.push(self.k_th(k as usize));
+//             k += range.step;
+//         }
+//         result
+//     }
+// }
+// 
+// pub struct Constant {
+//     value: f64,
+// }
+// 
+// impl Constant {
+//     pub fn new(value: f64) -> Box<Constant> {
+//         Box::new(Constant { value })
+//     }
+// 
+//     pub fn k_th(&self, k: usize) -> f64 {
+//         self.value
+//     }
+// 
+//     pub fn range(&self, range: Range) -> Vec<f64> {
+//         let mut result = Vec::new();
+//         let mut k = range.from;
+//         while k <= range.to {
+//             result.push(self.value);
+//         }
+//         result
+//     }
+// }
+// 
+// pub struct Geometric {
+//     start: f64,
+//     quot: f64,
+// }
+// 
+// impl Geometric {
+//     pub fn new(start: f64, quot: f64) -> Box<Geometric> {
+//         Box::new(Geometric { start, quot })
+//     }
+// 
+//     pub fn k_th(&self, k: usize) -> f64 {
+//         self.start * self.quot.powi(k as i32)
+//     }
+// 
+//     pub fn range(&self, range: Range) -> Vec<f64> {
+//         let mut result = Vec::new();
+//         let mut k = range.from;
+//         while k <= range.to {
+//             result.push(self.k_th(k as usize));
+//             k = k * range.quot;
+//         }
+//         result
+//     }
+// }
+// 
+// 
+// 
 fn sequences() -> Vec<SequenceInfo> {
     let mut sequences = Vec::new();
     sequences.push(SequenceInfo {
