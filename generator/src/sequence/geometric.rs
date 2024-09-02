@@ -1,6 +1,5 @@
 use crate::Range;
 
-
 pub struct Geometric {
     start: f64,
     quot: f64,

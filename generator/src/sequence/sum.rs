@@ -17,8 +17,9 @@ where
     }
 
     pub fn k_th(&self, k: usize) -> f64 {
-        self.zaporedje1.k_th(k) + self.zaporedje2.k_th(k)
+        self.seq1.k_th(k) + self.seq2.k_th(k)
     }
+
 
     pub fn range(&self, range: Range) -> Vec<f64> {
         let mut result = Vec::new();
@@ -32,3 +33,9 @@ where
 }
 
 
+
+impl Sequence<S1: Sequence, S2: Sequence> for Sum<S1, S2> {
+    fn k_th(&self, k: usize) -> f64 {
+        self.seq1.k_th(k) + self.seq2.k_th(k)
+    }
+}
