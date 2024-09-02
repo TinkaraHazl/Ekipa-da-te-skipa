@@ -16,16 +16,24 @@ const PORT: u16 = 12345;
 
 pub mod sequence;
 
-use sequence::geometric::Geometric;
-use sequence::arithmetic::Arithmetic;
-use sequence::constant::Constant;
-use sequence::sum::Sum;
-use sequence::product::Product;
-use sequence::drop::Drop
 
-fn a() {
-    let k = Geometric::new(1.1,2.);
-}
+use sequence::arithmetic::Arithmetic;
+use sequence::catalan::Catalan;
+use sequence::constant::Constant;
+use sequence::drop::Drop;
+use sequence::geometric::Geometric;
+use sequence::lah::Lah;
+use sequence::mix::Mix;
+use sequence::product::Product;
+use sequence::sum::Sum;
+use sequence::tribonacci::Tribonacci;
+
+
+
+
+// fn a() {
+//     let k = Geometric::new(1.1,2.);
+// }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
@@ -158,13 +166,23 @@ fn sequences() -> Vec<SequenceInfo> {
         parameters: 3,
         sequences: 2,
     });
+    sequences.push(SequenceInfo {
+        name: "Mix".to_string(),
+        description: "Generates a new sequence by alternating elements from two 
+        provided sequences. The 'step' parameter determines how many elements
+        from each sequence are included before switching and is rounded to the 
+        greatest integer less than or equal to the input. If 'step' is less
+        than one, the function panics.".to_string(),
+        parameters: 1,
+        sequences: 2,
+    });
     sequences
 }
 
 fn get_project() -> Project {
     return Project {
-        name: "Matija & Filip".to_string(),
-        ip: "0.0.0.0".to_string(),
+        name: "Tinkara & Jaka".to_string(),
+        ip: "127.0.0.1".to_string(),
         port: PORT,
     };
 }
@@ -249,7 +267,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     (&Method::POST, r) => {
                         let seqs = sequences();
                         let sequences = seqs
-                            // .iter()
+                            .iter()
                             .find(|&x| ("/sequence/".to_string() + &x.name) == r);
                         match sequences {
                             None => create_404(),
