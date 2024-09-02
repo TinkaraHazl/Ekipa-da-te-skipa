@@ -21,7 +21,7 @@ use sequence::arithmetic::Arithmetic;
 use sequence::constant::Constant;
 use sequence::sum::Sum;
 use sequence::product::Product;
-use sequence::drop::Drop
+use sequence::drop::Drop;
 
 fn a() {
     let k = Geometric::new(1.1,2.);
