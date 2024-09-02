@@ -1,3 +1,10 @@
+pub mod geometric;
+pub mod constant;
+pub mod arithmetic;
+pub mod product;
+pub mod sum;
+pub mod drop;
+
 pub trait Sequence<T> {
     fn name(&self) -> String;
     fn start(&self) -> T;

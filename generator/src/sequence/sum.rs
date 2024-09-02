@@ -1,5 +1,5 @@
 use crate::Range;
-use super::models::Sequence;
+use crate::models::Sequence;
 
 pub struct Sum<S1, S2> {
     zaporedje1: S1,  
