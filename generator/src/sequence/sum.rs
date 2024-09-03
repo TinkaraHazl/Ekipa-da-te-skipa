@@ -1,4 +1,3 @@
-use crate::Range;
 use crate::sequence::Sequence;
 
 pub struct Sum<S1, S2> {
@@ -17,17 +16,6 @@ where
 
     pub fn k_th(&self, k: usize) -> f64 {
         self.zaporedje1.k_th(k) + self.zaporedje2.k_th(k)
-    }
-
-
-    pub fn range(&self, range: Range) -> Vec<f64> {
-        let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
-            result.push(self.k_th(k as usize));
-            k += range.step;
-        }
-        result
     }
 }
 

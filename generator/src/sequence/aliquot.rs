@@ -1,4 +1,3 @@
-use crate::Range;
 use crate::sequence::Sequence;
 
 pub struct Aliquot {
@@ -9,17 +8,6 @@ impl Aliquot {
     pub fn new(a: usize) -> Box<Aliquot> {
         Box::new(Aliquot {a})
     }
-    
-    pub fn range(&self, range: Range) -> Vec<f64> {
-        let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
-            result.push(self.k_th(k as usize));
-            k += range.step;
-        }
-        result
-    }
-
 }
 
 impl Sequence<f64> for Aliquot {
