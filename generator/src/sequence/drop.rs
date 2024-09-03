@@ -1,5 +1,5 @@
 use crate::Range;
-use super::models::Sequence;
+use crate::sequence::Sequence;
 
 pub struct Drop<S: Sequence<f64>> {
     seq: S,

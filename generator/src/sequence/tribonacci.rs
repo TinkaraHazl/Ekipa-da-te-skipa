@@ -1,5 +1,5 @@
 use crate::Range;
-use super::models::Sequence;
+use crate::sequence::Sequence;
 pub struct Tribonacci {
     a0: f64,
     a1: f64,
