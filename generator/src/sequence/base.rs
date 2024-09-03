@@ -1,4 +1,3 @@
-use crate::Range;
 use crate::sequence::Sequence;
 
 pub struct Base<S: Sequence<f64>> {
@@ -10,15 +9,6 @@ pub struct Base<S: Sequence<f64>> {
 impl<S: Sequence<f64>> Base<S> {
     pub fn new(seq: S, b: usize, n: usize) -> Box<Base<S>> {
         Box::new(Base{seq, b, n})
-    }
-    pub fn range(&self, range: Range) -> Vec<f64> {
-        let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
-            result.push(self.k_th(k as usize));
-            k += range.step;
-        }
-        result
     }
 }
 

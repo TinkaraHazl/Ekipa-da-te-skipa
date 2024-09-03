@@ -1,4 +1,3 @@
-use crate::Range;
 use crate::sequence::Sequence;
 
 pub struct Mix<S1, S2> {
@@ -16,7 +15,9 @@ impl<S1: Sequence<f64>, S2: Sequence<f64>> Mix<S1, S2> {
         }
         Mix { seq1, seq2, step }
     }
+}
 
+impl<S1: Sequence<f64>, S2: Sequence<f64>> Sequence<f64> for Mix<S1, S2> {
     fn k_th(&self, k: usize) -> f64 {
         let s = self.step as usize;
         let q = k / s;
@@ -27,15 +28,5 @@ impl<S1: Sequence<f64>, S2: Sequence<f64>> Mix<S1, S2> {
         else {
             self.seq2.k_th((q / 2) * s + n - 1)
         }
-    }
-
-    fn range(&self, range: Range) -> Vec<f64> {
-        let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
-            result.push(self.k_th(k as usize));
-            k += range.step;
-        }
-        result
     }
 }

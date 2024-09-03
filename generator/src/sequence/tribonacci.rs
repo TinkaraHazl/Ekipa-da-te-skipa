@@ -1,4 +1,3 @@
-use crate::Range;
 use crate::sequence::Sequence;
 pub struct Tribonacci {
     a0: f64,
@@ -10,8 +9,10 @@ impl Tribonacci {
     pub fn new(a0: f64, a1: f64, a2: f64) -> Box<Tribonacci> {
         Box::new(Tribonacci { a0, a1, a2 })
     }
+}
 
-    pub fn k_th(&self, k: usize) -> f64 {
+impl Sequence<f64> for Tribonacci {
+    fn k_th(&self, k: usize) -> f64 {
         if k == 0 {
             self.a0
         } else if k == 1 {
@@ -31,15 +32,4 @@ impl Tribonacci {
             current
         }
     }
-
-    pub fn range(&self, range: Range) -> Vec<f64> {
-        let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
-            result.push(self.k_th(k as usize));
-            k += range.step;
-        }
-        result
-    }
 }
-
