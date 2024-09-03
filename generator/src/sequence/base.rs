@@ -50,10 +50,10 @@ fn ten_to_b (t: f64, n: usize) -> f64 {
 }
 
 
-//#[cfg(test)]
-//mod tests {
-//    #[test]
-//    fn ten_to_b() {
-//        assert_eq!(ten_to_b(3.0, 2.0), 11)
-//    }
-//}
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn ten_to_b() {
+        assert_eq!(ten_to_b(3.0, 2.0), 11)
+    }
+}

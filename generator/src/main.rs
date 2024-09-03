@@ -16,6 +16,8 @@ const PORT: u16 = 12345;
 
 pub mod sequence;
 
+use crate::sequence::Sequence;
+
 
 use sequence::arithmetic::Arithmetic;
 use sequence::catalan::Catalan;
@@ -256,12 +258,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             .find(|&x| ("/sequence/".to_string() + &x.name) == r);
                         match sequences {
                             None => create_404(),
-                            Some(s) if *s.name == "Arithmetic".to_string() => {
+                            Some(s) //if *s.name == "Arithmetic".to_string() 
+                            => {
                                 let body = collect_body(req).await?;
                                 let request: SequenceRequest = serde_json::from_str(&body).unwrap();
                                 let range = request.range;
-                                let seq =
-                                    Arithmetic::new(request.parameters[0], request.parameters[1]);
+                                //let seq =
+                                //    Arithmetic::new(request.parameters[0], request.parameters[1]);
                                 Ok(Response::new(full(
                                     serde_json::to_string(&seq.range(range)).unwrap(),
                                 )))
@@ -278,5 +281,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         if let Err(err) = http1::Builder::new().serve_connection(io, service).await {
             println!("Error serving connection: {:?}", err);
         }
+    }
+}
+
+fn create_sequence(name: &str, parameters: Vec<i32>) -> Option<Box<dyn Sequence<f64>>> {
+    match name {
+        "Arithmetic" => Some(Box::new(Arithmetic::new(parameters[0], parameters[1]))),
+        // Add other sequences here
+        "Geometric" => Some(Box::new(Geometric::new(parameters[0], parameters[1]))),
+        _ => None,
     }
 }
