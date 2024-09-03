@@ -22,7 +22,7 @@ pub trait Sequence<T> {
 
     //fn contains(&self, item: T) -> bool;
 }
-pub mod models;
+// pub mod models;
 pub mod drop;
 pub mod tribonacci;
 pub mod catalan;
