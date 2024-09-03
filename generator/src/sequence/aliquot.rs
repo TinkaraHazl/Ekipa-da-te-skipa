@@ -1,7 +1,7 @@
 use crate::Range;
 use crate::sequence::Sequence;
 
-struct Aliquot {
+pub struct Aliquot {
     a : usize
 }
 
