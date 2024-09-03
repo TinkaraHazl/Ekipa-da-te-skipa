@@ -19,7 +19,7 @@ impl<S: Sequence<f64>> Sequence<f64> for Base<S> {
 }
 
 fn b_to_ten (t: f64, b: usize) -> f64 {
-    let mut s: f64 = 0;
+    let mut s: f64 = 0.0;
     let int: f64 = t.trunc();
     let frac: f64 = t - int;
     let mut int_str: String = int.to_string();
@@ -36,7 +36,7 @@ fn b_to_ten (t: f64, b: usize) -> f64 {
 }
 
 fn ten_to_b (t: f64, n: usize) -> f64 {
-    let s: f64 = 0;
+    let s: f64 = 0.0;
     let mut int_t = t.trunc();
     let mut frac_t = t - int_t;
     while int_t > 0 {

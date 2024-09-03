@@ -23,7 +23,7 @@ use sequence::arithmetic::Arithmetic;
 use sequence::catalan::Catalan;
 use sequence::constant::Constant;
 use sequence::aliquot::Aliquot;
-use sequence::base::Base;
+//use sequence::base::Base;
 use sequence::drop::Drop;
 use sequence::geometric::Geometric;
 use sequence::lah::Lah;
@@ -163,7 +163,7 @@ fn sequences() -> Vec<SequenceInfo> {
     //    parameters: 3, 
     //    sequences: 2,
     //});
-    //sequences
+    sequences
 }
 
 fn get_project() -> Project {
@@ -258,13 +258,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             .find(|&x| ("/sequence/".to_string() + &x.name) == r);
                         match sequences {
                             None => create_404(),
-                            Some(s) //if *s.name == "Arithmetic".to_string() 
+                            Some(s) if *s.name == "Arithmetic".to_string() 
                             => {
                                 let body = collect_body(req).await?;
                                 let request: SequenceRequest = serde_json::from_str(&body).unwrap();
                                 let range = request.range;
-                                //let seq =
-                                //    Arithmetic::new(request.parameters[0], request.parameters[1]);
+                                let seq =
+                                    Arithmetic::new(request.parameters[0], request.parameters[1]);
                                 Ok(Response::new(full(
                                     serde_json::to_string(&seq.range(range)).unwrap(),
                                 )))
@@ -284,11 +284,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-fn create_sequence(name: &str, parameters: Vec<i32>) -> Option<Box<dyn Sequence<f64>>> {
-    match name {
-        "Arithmetic" => Some(Box::new(Arithmetic::new(parameters[0], parameters[1]))),
-        // Add other sequences here
-        "Geometric" => Some(Box::new(Geometric::new(parameters[0], parameters[1]))),
-        _ => None,
-    }
-}
+//fn create_sequence(name: &str, parameters: Vec<i32>) -> Option<Box<dyn Sequence<f64>>> {
+//    match name {
+//        "Arithmetic" => Some(Box::new(Arithmetic::new(parameters[0], parameters[1]))),
+//        // Add other sequences here
+//        "Geometric" => Some(Box::new(Geometric::new(parameters[0], parameters[1]))),
+//        _ => None,
+//    }
+//}
