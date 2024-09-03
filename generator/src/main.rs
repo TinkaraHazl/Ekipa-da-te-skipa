@@ -20,6 +20,8 @@ pub mod sequence;
 use sequence::arithmetic::Arithmetic;
 use sequence::catalan::Catalan;
 use sequence::constant::Constant;
+use sequence::aliquot::Aliquot;
+use sequence::base::Base;
 use sequence::drop::Drop;
 use sequence::geometric::Geometric;
 use sequence::lah::Lah;
@@ -71,87 +73,6 @@ pub struct SequenceInfo {
     sequences: u32,
 }
 
-// pub struct Arithmetic {
-//     start: f64,
-//     step: f64,
-// }
-// 
-// pub struct Constant {
-//     
-// }
-// 
-// 
-// 
-// impl Arithmetic {
-//     pub fn new(start: f64, step: f64) -> Box<Arithmetic> {
-//         Box::new(Arithmetic { start, step })
-//     }
-// 
-//     pub fn k_th(&self, k: usize) -> f64 {
-//         self.start + (k as f64) * self.step
-//     }
-// 
-//     pub fn range(&self, range: Range) -> Vec<f64> {
-//         let mut result = Vec::new();
-//         let mut k = range.from;
-//         while k <= range.to {
-//             result.push(self.k_th(k as usize));
-//             k += range.step;
-//         }
-//         result
-//     }
-// }
-// 
-// pub struct Constant {
-//     value: f64,
-// }
-// 
-// impl Constant {
-//     pub fn new(value: f64) -> Box<Constant> {
-//         Box::new(Constant { value })
-//     }
-// 
-//     pub fn k_th(&self, k: usize) -> f64 {
-//         self.value
-//     }
-// 
-//     pub fn range(&self, range: Range) -> Vec<f64> {
-//         let mut result = Vec::new();
-//         let mut k = range.from;
-//         while k <= range.to {
-//             result.push(self.value);
-//         }
-//         result
-//     }
-// }
-// 
-// pub struct Geometric {
-//     start: f64,
-//     quot: f64,
-// }
-// 
-// impl Geometric {
-//     pub fn new(start: f64, quot: f64) -> Box<Geometric> {
-//         Box::new(Geometric { start, quot })
-//     }
-// 
-//     pub fn k_th(&self, k: usize) -> f64 {
-//         self.start * self.quot.powi(k as i32)
-//     }
-// 
-//     pub fn range(&self, range: Range) -> Vec<f64> {
-//         let mut result = Vec::new();
-//         let mut k = range.from;
-//         while k <= range.to {
-//             result.push(self.k_th(k as usize));
-//             k = k * range.quot;
-//         }
-//         result
-//     }
-// }
-// 
-// 
-// 
 fn sequences() -> Vec<SequenceInfo> {
     let mut sequences = Vec::new();
     sequences.push(SequenceInfo {
@@ -160,10 +81,32 @@ fn sequences() -> Vec<SequenceInfo> {
         parameters: 2,
         sequences: 0,
     });
+    let mut sequences = Vec::new();
     sequences.push(SequenceInfo {
-        name: "Lin Comb".to_string(),
-        description: "".to_string(),
+        name: "Geometric".to_string(),
+        description: "Geometric sequence".to_string(),
+        parameters: 2,
+        sequences: 0,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Tribonacci".to_string(),
+        description: "Tribonacci sequence".to_string(),
         parameters: 3,
+        sequences: 0,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Sum".to_string(),
+        description: "Sum of two sequences by term".to_string(),
+        parameters: 0,
+        sequences: 2,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Product".to_string(),
+        description: "Product of two sequences by term".to_string(),
+        parameters: 0,
         sequences: 2,
     });
     sequences.push(SequenceInfo {
@@ -176,13 +119,55 @@ fn sequences() -> Vec<SequenceInfo> {
         parameters: 1,
         sequences: 2,
     });
-    sequences
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Drop".to_string(),
+        description: "Dropping the first k terms of a sequence".to_string(),
+        parameters: 1,
+        sequences: 1,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Lah".to_string(),
+        description: "Generates a sequence of the number of ways a set can be  paritioned into k linearly ordered 
+                    terms, where set size increases by term and k is the parameter chosen.".to_string(),
+        parameters: 1,
+        sequences: 0,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Catalan".to_string(),
+        description: "Sequence of Catalan numbers".to_string(),
+        parameters: 0,
+        sequences: 0,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Base".to_string(),
+        description: "Changes the sequence from one number system to another. Only works for bases from 2 to 10.".to_string(),
+        parameters: 2,
+        sequences: 1,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Aliquot".to_string(),
+        description: "A sequence of positive integers in which each term is the sum of proper divisors of the previous term. ".to_string(),
+        parameters: 1,
+        sequences: 0,
+    });
+    //sequences.push(SequenceInfo {
+    //    name: "Lin Comb".to_string(),
+    //    description: "".to_string(),
+    //    parameters: 3, 
+    //    sequences: 2,
+    //});
+    //sequences
 }
 
 fn get_project() -> Project {
     return Project {
-        name: "Tinkara & Jaka".to_string(),
-        ip: "127.0.0.1".to_string(),
+        name: "Jaka & Tinkara".to_string(),
+        ip: "0.0.0.0".to_string(),
         port: PORT,
     };
 }

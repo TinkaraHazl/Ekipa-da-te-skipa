@@ -1,5 +1,5 @@
 use crate::Range;
-use super::models::Sequence;
+use crate::sequence::Sequence;
 
 pub struct Product<S1, S2> {
     zaporedje1: S1,  
