@@ -1,18 +1,15 @@
 use crate::Range;
 use crate::sequence::Sequence;
 
-pub struct Drop<S: Sequence<f64>> {
-    seq: S,
-    d : usize
+struct Aliquot {
+    a : usize
 }
 
-impl<S: Sequence<f64>> Drop<S> {
-    pub fn new(seq: S, d: usize) -> Box<Drop<S>> {
-        Box::new(Drop{ seq, d })
+impl Aliquot {
+    pub fn new(a: usize) -> Box<Aliquot> {
+        Box::new(Aliquot {a})
     }
-
-
-
+    
     pub fn range(&self, range: Range) -> Vec<f64> {
         let mut result = Vec::new();
         let mut k = range.from;
@@ -22,10 +19,20 @@ impl<S: Sequence<f64>> Drop<S> {
         }
         result
     }
+
 }
 
-impl<S: Sequence<f64>> Sequence<f64> for Drop<S> {
+impl Sequence<f64> for Aliquot {
     fn k_th(&self, k: usize) -> f64 {
-        self.seq.k_th(k + self.d)
+        let mut a = self.a;
+        for n in 0..k {
+            a = aliquot_sum(a)
+        }
+        a as f64
     }
 }
+
+fn aliquot_sum(a: usize) -> usize {
+    (1..(a / 2 + 1)).filter(|i| a % i == 0).sum()
+}
+

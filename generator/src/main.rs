@@ -20,7 +20,7 @@ use sequence::geometric::Geometric;
 use sequence::arithmetic::Arithmetic;
 use sequence::constant::Constant;
 use sequence::sum::Sum;
-use sequence::product::Product;
+use sequence::product::Produkt;
 use sequence::drop::Drop;
 
 fn a() {
@@ -152,18 +152,82 @@ fn sequences() -> Vec<SequenceInfo> {
         parameters: 2,
         sequences: 0,
     });
+    let mut sequences = Vec::new();
     sequences.push(SequenceInfo {
-        name: "Lin Comb".to_string(),
-        description: "".to_string(),
+        name: "Geometric".to_string(),
+        description: "Geometric sequence".to_string(),
+        parameters: 2,
+        sequences: 0,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Tribonacci".to_string(),
+        description: "Tribonacci sequence".to_string(),
         parameters: 3,
+        sequences: 0,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Sum".to_string(),
+        description: "Sum of two sequences by term".to_string(),
+        parameters: 0,
         sequences: 2,
     });
-    sequences
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Product".to_string(),
+        description: "Product of two sequences by term".to_string(),
+        parameters: 0,
+        sequences: 2,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Drop".to_string(),
+        description: "Dropping the first k terms of a sequence".to_string(),
+        parameters: 1,
+        sequences: 1,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Lah".to_string(),
+        description: "Generates a sequence of the number of ways a set can be  paritioned into k linearly ordered 
+                    terms, where set size increases by term and k is the parameter chosen.".to_string(),
+        parameters: 1,
+        sequences: 0,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Catalan".to_string(),
+        description: "Sequence of Catalan numbers".to_string(),
+        parameters: 0,
+        sequences: 0,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Base".to_string(),
+        description: "Changes the sequence from one number system to another. Only works for bases from 2 to 10.".to_string(),
+        parameters: 2,
+        sequences: 1,
+    });
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Aliquot".to_string(),
+        description: "A sequence of positive integers in which each term is the sum of proper divisors of the previous term. ".to_string(),
+        parameters: 1,
+        sequences: 0,
+    });
+    //sequences.push(SequenceInfo {
+    //    name: "Lin Comb".to_string(),
+    //    description: "".to_string(),
+    //    parameters: 3, 
+    //    sequences: 2,
+    //});
+    //sequences
 }
 
 fn get_project() -> Project {
     return Project {
-        name: "Matija & Filip".to_string(),
+        name: "Jaka & Tinkara".to_string(),
         ip: "0.0.0.0".to_string(),
         port: PORT,
     };

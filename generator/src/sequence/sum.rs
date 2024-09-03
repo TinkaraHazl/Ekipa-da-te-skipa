@@ -1,5 +1,5 @@
 use crate::Range;
-use crate::models::Sequence;
+use crate::sequence::Sequence;
 
 pub struct Sum<S1, S2> {
     zaporedje1: S1,  
@@ -34,7 +34,7 @@ where
 
 
 
-impl Sequence<S1: Sequence, S2: Sequence> for Sum<S1, S2> {
+impl Sequence<S1: Sequence<f64>, S2: Sequence<f64>> for Sum<S1, S2> {
     fn k_th(&self, k: usize) -> f64 {
         self.seq1.k_th(k) + self.seq2.k_th(k)
     }
