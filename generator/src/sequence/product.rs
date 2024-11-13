@@ -11,7 +11,7 @@ where
     S1: Sequence<f64>, 
     S2: Sequence<f64>,  
 {
-    pub fn nov(zaporedje1: S1, zaporedje2: S2) -> Product<S1, S2> {
+    pub fn new(zaporedje1: S1, zaporedje2: S2) -> Product<S1, S2> {
         Product { zaporedje1, zaporedje2 }
     }
 

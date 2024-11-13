@@ -5,8 +5,8 @@ pub struct Aliquot {
 }
 
 impl Aliquot {
-    pub fn new(a: usize) -> Box<Aliquot> {
-        Box::new(Aliquot {a})
+    pub fn new(a: usize) -> Aliquot {
+        Aliquot {a}
     }
 }
 

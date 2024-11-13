@@ -284,11 +284,85 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-//fn create_sequence(name: &str, parameters: Vec<i32>) -> Option<Box<dyn Sequence<f64>>> {
-//    match name {
-//        "Arithmetic" => Some(Box::new(Arithmetic::new(parameters[0], parameters[1]))),
-//        // Add other sequences here
-//        "Geometric" => Some(Box::new(Geometric::new(parameters[0], parameters[1]))),
-//        _ => None,
-//    }
-//}
+fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequence<f64>>>) -> Option<Box<dyn Sequence<f64>>> {
+    match name {
+        "Arithmetic" => {
+            if parameters.len() == 2 && sequences.is_empty() {
+                Some(Box::new(Arithmetic::new(parameters[0], parameters[1])))
+            } else {
+                None
+            }
+        }
+        "Geometric" => {
+            if parameters.len() == 2 && sequences.is_empty() {
+                Some(Box::new(Geometric::new(parameters[0], parameters[1])))
+            } else {
+                None
+            }
+        }
+        "Tribonacci" => {
+            if parameters.len() == 3 && sequences.is_empty() {
+                Some(Box::new(Tribonacci::new(parameters[0], parameters[1], parameters[2])))
+            } else {
+                None
+            }
+        }
+        "Sum" => {
+            if parameters.is_empty() && sequences.len() == 2 {
+                Some(Box::new(Sum::new(sequences[0], sequences[1])))
+            } else {
+                None
+            }
+        }
+        "Product" => {
+            if parameters.is_empty() && sequences.len() == 2 {
+                Some(Box::new(Product::new(sequences[0].clone(), sequences[1].clone())))
+            } else {
+                None
+            }
+        }
+        "Mix" => {
+            if parameters.len() == 1 && sequences.len() == 2 {
+                Some(Box::new(Mix::new(parameters[0] as usize, sequences[0].clone(), sequences[1].clone())))
+            } else {
+                None
+            }
+        }
+        "Drop" => {
+            if parameters.len() == 1 && sequences.len() == 1 {
+                Some(Box::new(Drop::new(parameters[0] as usize, sequences[0].clone())))
+            } else {
+                None
+            }
+        }
+        "Lah" => {
+            if parameters.len() == 1 && sequences.is_empty() {
+                Some(Box::new(Lah::new(parameters[0] as usize)))
+            } else {
+                None
+            }
+        }
+        "Catalan" => {
+            if parameters.is_empty() && sequences.is_empty() {
+                Some(Box::new(Catalan::new()))
+            } else {
+                None
+            }
+        }
+        "Base" => {
+            if parameters.len() == 2 && sequences.len() == 1 {
+                Some(Box::new(Base::new(parameters[0] as usize, parameters[1] as usize, sequences[0].clone())))
+            } else {
+                None
+            }
+        }
+        "Aliquot" => {
+            if parameters.len() == 1 && sequences.is_empty() {
+                Some(Box::new(Aliquot::new(parameters[0] as usize)))
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}

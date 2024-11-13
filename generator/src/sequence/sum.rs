@@ -10,7 +10,7 @@ where
     S1: Sequence<f64>, 
     S2: Sequence<f64>,  
 {
-    pub fn nov(seq1: S1, seq2: S2) -> Sum<S1, S2> {
+    pub fn new(seq1: S1, seq2: S2) -> Sum<S1, S2> {
         Sum { seq1, seq2 }
     }
 }

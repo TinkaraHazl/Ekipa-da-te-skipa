@@ -6,8 +6,8 @@ pub struct Arithmetic {
 }
 
 impl Arithmetic {
-    pub fn new(start: f64, step: f64) -> Box<Arithmetic> {
-        Box::new(Arithmetic { start, step })
+    pub fn new(start: f64, step: f64) -> Arithmetic {
+        Arithmetic { start, step }
     }
 }
 

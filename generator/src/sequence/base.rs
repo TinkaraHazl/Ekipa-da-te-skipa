@@ -7,8 +7,8 @@ pub struct Base<S: Sequence<f64>> {
 }
 
 impl<S: Sequence<f64>> Base<S> {
-    pub fn new(seq: S, b: usize, n: usize) -> Box<Base<S>> {
-        Box::new(Base{seq, b, n})
+    pub fn new(seq: S, b: usize, n: usize) -> Base<S> {
+        Base{seq, b, n}
     }
 }
 

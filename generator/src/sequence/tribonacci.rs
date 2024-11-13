@@ -6,8 +6,8 @@ pub struct Tribonacci {
 }
 
 impl Tribonacci {
-    pub fn new(a0: f64, a1: f64, a2: f64) -> Box<Tribonacci> {
-        Box::new(Tribonacci { a0, a1, a2 })
+    pub fn new(a0: f64, a1: f64, a2: f64) -> Tribonacci {
+        Tribonacci { a0, a1, a2 }
     }
 }
 
