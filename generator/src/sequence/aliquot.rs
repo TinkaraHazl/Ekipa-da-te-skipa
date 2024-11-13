@@ -13,7 +13,7 @@ impl Aliquot {
 impl Sequence<f64> for Aliquot {
     fn k_th(&self, k: usize) -> f64 {
         let mut a = self.a;
-        for n in 0..k {
+        for _n in 0..k {
             a = aliquot_sum(a)
         }
         a as f64
@@ -21,6 +21,11 @@ impl Sequence<f64> for Aliquot {
 }
 
 fn aliquot_sum(a: usize) -> usize {
-    (1..(a / 2 + 1)).filter(|i| a % i == 0).sum()
+    let less = |x| if x < a { x } else { 0 };
+    (1usize..)
+        .take_while(|&x| x.checked_mul(x).map_or(false, |x2| x2 <= a))
+        .filter(|x| a % x == 0)
+        .map(|x| less(x) + usize::from(a / x != x) * less(a / x))
+        .sum::<usize>()
 }
 

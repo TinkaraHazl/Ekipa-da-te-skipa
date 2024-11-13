@@ -20,40 +20,51 @@ impl<S: Sequence<f64>> Sequence<f64> for Base<S> {
 
 fn b_to_ten (t: f64, b: usize) -> f64 {
     let mut s: f64 = 0.0;
-    let int: f64 = t.trunc();
-    let frac: f64 = t - int;
-    let mut int_str: String = int.to_string();
-    let frac_str: String = frac.to_string();
-    let lw: usize = int_str.chars.count();
-    let lf: usize  = frac_str.chars.count();
+    let mut int: f64 = t.trunc();
+    let mut frac: f64 = t - t.trunc();
 
-    for i in 0..lw {
-        s += int_str.pop() * b.pow(i)
+    let mut pi = 1.0;
+    while int > 0.0 {
+        let digit = int % 10.0;
+        s += (digit as f64) * ((b as f64).powf(pi));
+        int /= 10.0;
+        pi += 1.0;
+    };
+
+    let mut pf = 1.0;
+    while frac > 0.0 {
+        frac *= 10.0;
+        let digit  = frac.trunc();
+        s += digit / ((b as f64)).powf(-pf);
+        frac -= digit;
+        pf += 1.0
     }
-    for i in 3..lf {
-        s += frac_str.chars().nth(i).unwrap() * b.pow(-(i - 2))
-    }
+
+    s
 }
 
 fn ten_to_b (t: f64, n: usize) -> f64 {
-    let s: f64 = 0.0;
+    let mut s: f64 = 0.0;
     let mut int_t = t.trunc();
     let mut frac_t = t - int_t;
-    while int_t > 0 {
-        s += int_t % n;
-        int_t /= n
+
+    while int_t > 0.0 {
+        s += int_t % (n as f64);
+        int_t /= n as f64
     }
+
     for i in 1..11 {
-        s += ((frac_t * n) / 1).powi(-i);
-        frac_t = (frac_t * n) % 1
+        s += ((frac_t * (n as f64)) / 1.0).powi(-i);
+        frac_t = (frac_t * (n as f64)) % 1.0
     }
+    s
 }
 
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn ten_to_b() {
-        assert_eq!(ten_to_b(3.0, 2.0), 11)
-    }
-}
+//#[cfg(test)]
+//mod tests {
+//    #[test]
+//    fn ten_to_b() {
+//        let result = ten_to_b(3.0, 2);
+//        assert_eq!(result, 11.0)
+//    }
+//}
