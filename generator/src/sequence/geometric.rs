@@ -15,7 +15,7 @@ impl Geometric {
     }
 }
 
-impl Sequence<f64> for Geometric {
+impl Sequence for Geometric {
     fn k_th(&self, k: usize) -> f64 {
         self.start * self.quot.powi(k as i32)
     }

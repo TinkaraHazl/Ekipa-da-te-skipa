@@ -10,7 +10,7 @@ impl Constant {
     }
 }
 
-impl Sequence<f64> for Constant {
+impl Sequence for Constant {
     fn k_th(&self, k: usize) -> f64 {
         self.value
     }

@@ -11,7 +11,7 @@ impl Tribonacci {
     }
 }
 
-impl Sequence<f64> for Tribonacci {
+impl Sequence for Tribonacci {
     fn k_th(&self, k: usize) -> f64 {
         if k == 0 {
             self.a0

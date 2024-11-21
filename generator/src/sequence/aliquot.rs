@@ -10,7 +10,7 @@ impl Aliquot {
     }
 }
 
-impl Sequence<f64> for Aliquot {
+impl Sequence for Aliquot {
     fn k_th(&self, k: usize) -> f64 {
         let mut a = self.a;
         for _n in 0..k {

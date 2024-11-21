@@ -1,23 +1,23 @@
 use crate::sequence::Sequence;
 
-pub struct Mix<S1, S2> {
-    seq1: S1,  
-    seq2: S2, 
-    step: f64,
+pub struct Mix {
+    seq1: Box<dyn Sequence>,  
+    seq2: Box<dyn Sequence>, 
+    step: f64
 }
 
 
 
-impl<S1: Sequence<f64>, S2: Sequence<f64>> Mix<S1, S2> {
-    fn new(seq1: S1, seq2: S2, step: f64) -> Mix<S1, S2> {
+impl Mix {
+    pub fn new(seq1: Box<dyn Sequence>, seq2: Box<dyn Sequence>, step: f64) -> Box<Mix> {
         if (step as usize) < 1 {
             panic!("Step must be greater or equal to 1.")
         }
-        Mix { seq1, seq2, step }
+        Box::new(Mix { seq1, seq2, step })
     }
 }
 
-impl<S1: Sequence<f64>, S2: Sequence<f64>> Sequence<f64> for Mix<S1, S2> {
+impl Sequence for Mix {
     fn k_th(&self, k: usize) -> f64 {
         let s = self.step as usize;
         let q = k / s;
