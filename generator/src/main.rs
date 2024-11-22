@@ -248,18 +248,25 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
 
         "Product" => {
             if parameters.is_empty() && sequences.len() == 2 {
-                Some(Product::new(sequences[0], sequences[1]))
+                let mut iter = sequences.into_iter();
+                let seq1 = iter.next()?; // Extract the first element
+                let seq2 = iter.next()?; // Extract the second element
+                Some(Product::new(seq1, seq2)) // Pass ownership to `Sum::new`
             } else {
                 None
             }
         }
         "Mix" => {
-            if parameters.len() == 1 && sequences.len() == 2 {
-                Some(Mix::new(sequences[0], sequences[1], parameters[0]))
+            if parameters.is_empty() && sequences.len() == 2 {
+                let mut iter = sequences.into_iter();
+                let seq1 = iter.next()?; // First element
+                let seq2 = iter.next()?; // Second element
+                Some(Mix::new(seq1, seq2, step)) // Pass ownership to `SomeSequence::new`
             } else {
                 None
             }
         }
+
         "Drop" => {
             if parameters.len() == 1 && sequences.len() == 1 {
                 Some(Drop::new(sequences[0],parameters[0] as usize))
