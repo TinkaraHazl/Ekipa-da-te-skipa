@@ -257,11 +257,11 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
             }
         }
         "Mix" => {
-            if parameters.is_empty() && sequences.len() == 2 {
+            if parameters.len() == 1 && sequences.len() == 2 {
                 let mut iter = sequences.into_iter();
                 let seq1 = iter.next()?; // First element
                 let seq2 = iter.next()?; // Second element
-                Some(Mix::new(seq1, seq2, step)) // Pass ownership to `SomeSequence::new`
+                Some(Mix::new(seq1, seq2, parameters[0])) // Pass ownership to `SomeSequence::new`
             } else {
                 None
             }
@@ -271,8 +271,7 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
             if parameters.len() == 1 && sequences.len() == 1 {
                 let mut iter = sequences.into_iter();
                 let seq1 = iter.next()?; // Extract the first element
-                let seq2 = iter.next()?; // Extract the second element
-                Some(Drop::new(seq1, parameters[0]))
+                Some(Drop::new(seq1, parameters[0] as usize))
             } else {
                 None
             }
@@ -295,8 +294,7 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
             if parameters.len() == 2 && sequences.len() == 1 {
                 let mut iter = sequences.into_iter();
                 let seq1 = iter.next()?; // Extract the first element
-                let seq2 = iter.next()?; // Extract the second element
-                Some(Base::new(seq1, parameters[0], parameters[1]))
+                Some(Base::new(seq1, parameters[0] as usize, parameters[1] as usize))
             } else {
                 None
             }
