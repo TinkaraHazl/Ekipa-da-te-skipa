@@ -223,7 +223,7 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
         }
         "Geometric" => {
             if parameters.len() == 2 && sequences.is_empty() {
-                Some(Box::new(Geometric::new(parameters[0], parameters[1])))
+                Some(Geometric::new(parameters[0], parameters[1]))
             } else {
                 None
             }
