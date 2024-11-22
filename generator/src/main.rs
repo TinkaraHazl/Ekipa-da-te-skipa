@@ -262,7 +262,10 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
         }
         "Drop" => {
             if parameters.len() == 1 && sequences.len() == 1 {
-                Some(Drop::new(sequences[0],parameters[0] as usize))
+                let mut iter = sequences.into_iter();
+                let seq1 = iter.next()?; // Extract the first element
+                let seq2 = iter.next()?; // Extract the second element
+                Some(Drop::new(seq1, parameters[0]))
             } else {
                 None
             }
@@ -283,7 +286,10 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
         }
         "Base" => {
             if parameters.len() == 2 && sequences.len() == 1 {
-                Some(Base::new(sequences[0], parameters[0] as usize, parameters[1] as usize))
+                let mut iter = sequences.into_iter();
+                let seq1 = iter.next()?; // Extract the first element
+                let seq2 = iter.next()?; // Extract the second element
+                Some(Base::new(seq1, parameters[0], parameters[1]))
             } else {
                 None
             }
