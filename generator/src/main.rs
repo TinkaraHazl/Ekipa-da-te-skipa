@@ -237,11 +237,15 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
         }
         "Sum" => {
             if parameters.is_empty() && sequences.len() == 2 {
-                Some(Sum::new(sequences[0], sequences[1]))
+                let mut iter = sequences.into_iter();
+                let seq1 = iter.next()?; // Extract the first element
+                let seq2 = iter.next()?; // Extract the second element
+                Some(Sum::new(seq1, seq2)) // Pass ownership to `Sum::new`
             } else {
                 None
             }
         }
+
         "Product" => {
             if parameters.is_empty() && sequences.len() == 2 {
                 Some(Product::new(sequences[0], sequences[1]))
