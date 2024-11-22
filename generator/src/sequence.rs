@@ -14,7 +14,7 @@ pub mod mix;
 
 use crate::Range;
 
-pub trait Sequence<f64> {
+pub trait Sequence {
     //fn name(&self) -> String;
     //fn start(&self) -> T;
 

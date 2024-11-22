@@ -1,21 +1,17 @@
 use crate::sequence::Sequence;
 
-pub struct Sum<S1, S2> {
-    seq1: S1,  
-    seq2: S2, }
+pub struct Sum {
+    seq1: Box<dyn Sequence>,  
+    seq2: Box<dyn Sequence> }
 
 
-impl<S1, S2> Sum<S1, S2> 
-where
-    S1: Sequence<f64>, 
-    S2: Sequence<f64>,  
-{
-    pub fn new(seq1: S1, seq2: S2) -> Sum<S1, S2> {
-        Sum { seq1, seq2 }
+impl Sum {
+    pub fn new(seq1: Box<dyn Sequence>, seq2: Box<dyn Sequence>) -> Box<Sum> {
+        Box::new(Sum { seq1, seq2 })
     }
 }
 
-impl<S1: Sequence<f64>, S2: Sequence<f64>> Sequence<f64> for Sum<S1, S2> {
+impl Sequence for Sum {
     fn k_th(&self, k: usize) -> f64 {
         self.seq1.k_th(k) + self.seq2.k_th(k)
     }

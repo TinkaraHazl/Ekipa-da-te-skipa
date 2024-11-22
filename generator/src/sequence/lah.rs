@@ -12,7 +12,7 @@ impl Lah {
     }
 }
 
-impl Sequence<f64> for Lah {
+impl Sequence for Lah {
     fn k_th(&self, k: usize) -> f64 {
     (factorial(k as f64) / factorial(self.m as f64)).powi(2) * 
     (self.m as f64) / ((k as f64) * factorial((k as f64) - (self.m as f64)))

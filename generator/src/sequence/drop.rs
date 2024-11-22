@@ -1,17 +1,17 @@
 use crate::sequence::Sequence;
 
-pub struct Drop<S: Sequence<f64>> {
-    seq: S,
+pub struct Drop {
+    seq: Box<dyn Sequence>,
     d : usize
 }
 
-impl<S: Sequence<f64>> Drop<S> {
-    pub fn new(seq: S, d: usize) -> Box<Drop<S>> {
+impl Drop {
+    pub fn new(seq: Box<dyn Sequence>, d: usize) -> Box<Drop> {
         Box::new(Drop{ seq, d })
     }
 }
 
-impl<S: Sequence<f64>> Sequence<f64> for Drop<S> {
+impl Sequence for Drop {
     fn k_th(&self, k: usize) -> f64 {
         self.seq.k_th(k + self.d)
     }

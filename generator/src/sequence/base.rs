@@ -1,18 +1,18 @@
 use crate::sequence::Sequence;
 
-pub struct Base<S: Sequence<f64>> {
-    seq : S,
+pub struct Base {
+    seq : Box<dyn Sequence>,
     b : usize,
     n : usize,
 }
 
-impl<S: Sequence<f64>> Base<S> {
-    pub fn new(seq: S, b: usize, n: usize) -> Base<S> {
-        Base{seq, b, n}
+impl Base {
+    pub fn new(seq: Box<dyn Sequence>, b: usize, n: usize) -> Box<Base> {
+        Box::new(Base{seq, b, n})
     }
 }
 
-impl<S: Sequence<f64>> Sequence<f64> for Base<S> {
+impl Sequence for Base {
     fn k_th(&self, k: usize) -> f64 {
         ten_to_b(b_to_ten(self.seq.k_th(k), self.b), self.n)
     }

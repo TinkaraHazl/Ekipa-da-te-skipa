@@ -23,7 +23,7 @@ use sequence::arithmetic::Arithmetic;
 use sequence::catalan::Catalan;
 use sequence::constant::Constant;
 use sequence::aliquot::Aliquot;
-//use sequence::base::Base;
+use sequence::base::Base;
 use sequence::drop::Drop;
 use sequence::geometric::Geometric;
 use sequence::lah::Lah;
@@ -31,9 +31,6 @@ use sequence::mix::Mix;
 use sequence::product::Product;
 use sequence::sum::Sum;
 use sequence::tribonacci::Tribonacci;
-
-
-
 
 // fn a() {
 //     let k = Geometric::new(1.1,2.);
@@ -208,6 +205,96 @@ async fn send_get(url: String) -> Result<String, reqwest::Error> {
     return Ok(res);
 }
 
+fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequence>>) -> Option<Box<dyn Sequence>> {
+    match name {
+        "Constant" => {
+            if parameters.len() == 1 && sequences.is_empty() {
+                Some(Constant::new(parameters[0]))
+            } else {
+                None
+            }
+                }
+        "Arithmetic" => {
+            if parameters.len() == 2 && sequences.is_empty() {
+                Some(Box::new(Arithmetic::new(parameters[0], parameters[1])))
+            } else {
+                None
+            }
+        }
+        "Geometric" => {
+            if parameters.len() == 2 && sequences.is_empty() {
+                Some(Box::new(Geometric::new(parameters[0], parameters[1])))
+            } else {
+                None
+            }
+        }
+        "Tribonacci" => {
+            if parameters.len() == 3 && sequences.is_empty() {
+                Some(Box::new(Tribonacci::new(parameters[0], parameters[1], parameters[2])))
+            } else {
+                None
+            }
+        }
+        "Sum" => {
+            if parameters.is_empty() && sequences.len() == 2 {
+                Some(Sum::new(sequences[0], sequences[1]))
+            } else {
+                None
+            }
+        }
+        "Product" => {
+            if parameters.is_empty() && sequences.len() == 2 {
+                Some(Product::new(sequences[0], sequences[1]))
+            } else {
+                None
+            }
+        }
+        "Mix" => {
+            if parameters.len() == 1 && sequences.len() == 2 {
+                Some(Mix::new(sequences[0], sequences[1], parameters[0]))
+            } else {
+                None
+            }
+        }
+        "Drop" => {
+            if parameters.len() == 1 && sequences.len() == 1 {
+                Some(Drop::new(sequences[0],parameters[0] as usize))
+            } else {
+                None
+            }
+        }
+        "Lah" => {
+            if parameters.len() == 1 && sequences.is_empty() {
+                Some(Lah::new(parameters[0]))
+            } else {
+                None
+            }
+        }
+        "Catalan" => {
+            if parameters.is_empty() && sequences.is_empty() {
+                Some(Catalan::new())
+            } else {
+                None
+            }
+        }
+        "Base" => {
+            if parameters.len() == 2 && sequences.len() == 1 {
+                Some(Base::new(sequences[0], parameters[0] as usize, parameters[1] as usize))
+            } else {
+                None
+            }
+        }
+        "Aliquot" => {
+            if parameters.len() == 1 && sequences.is_empty() {
+                Some(Box::new(Aliquot::new(parameters[0] as usize)))
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr: SocketAddr = ([0, 0, 0, 0], PORT).into();
@@ -284,85 +371,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequence<f64>>>) -> Option<Box<dyn Sequence<f64>>> {
-    match name {
-        "Arithmetic" => {
-            if parameters.len() == 2 && sequences.is_empty() {
-                Some(Box::new(Arithmetic::new(parameters[0], parameters[1])))
-            } else {
-                None
-            }
-        }
-        "Geometric" => {
-            if parameters.len() == 2 && sequences.is_empty() {
-                Some(Box::new(Geometric::new(parameters[0], parameters[1])))
-            } else {
-                None
-            }
-        }
-        "Tribonacci" => {
-            if parameters.len() == 3 && sequences.is_empty() {
-                Some(Box::new(Tribonacci::new(parameters[0], parameters[1], parameters[2])))
-            } else {
-                None
-            }
-        }
-        "Sum" => {
-            if parameters.is_empty() && sequences.len() == 2 {
-                Some(Box::new(Sum::new(sequences[0], sequences[1])))
-            } else {
-                None
-            }
-        }
-        "Product" => {
-            if parameters.is_empty() && sequences.len() == 2 {
-                Some(Box::new(Product::new(sequences[0].clone(), sequences[1].clone())))
-            } else {
-                None
-            }
-        }
-        "Mix" => {
-            if parameters.len() == 1 && sequences.len() == 2 {
-                Some(Box::new(Mix::new(parameters[0] as usize, sequences[0].clone(), sequences[1].clone())))
-            } else {
-                None
-            }
-        }
-        "Drop" => {
-            if parameters.len() == 1 && sequences.len() == 1 {
-                Some(Box::new(Drop::new(parameters[0] as usize, sequences[0].clone())))
-            } else {
-                None
-            }
-        }
-        "Lah" => {
-            if parameters.len() == 1 && sequences.is_empty() {
-                Some(Box::new(Lah::new(parameters[0] as usize)))
-            } else {
-                None
-            }
-        }
-        "Catalan" => {
-            if parameters.is_empty() && sequences.is_empty() {
-                Some(Box::new(Catalan::new()))
-            } else {
-                None
-            }
-        }
-        "Base" => {
-            if parameters.len() == 2 && sequences.len() == 1 {
-                Some(Box::new(Base::new(parameters[0] as usize, parameters[1] as usize, sequences[0].clone())))
-            } else {
-                None
-            }
-        }
-        "Aliquot" => {
-            if parameters.len() == 1 && sequences.is_empty() {
-                Some(Box::new(Aliquot::new(parameters[0] as usize)))
-            } else {
-                None
-            }
-        }
-        _ => None,
-    }
-}
+

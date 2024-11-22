@@ -1,21 +1,17 @@
 use crate::sequence::Sequence;
 
-pub struct Product<S1, S2> {
-    zaporedje1: S1,  
-    zaporedje2: S2, }
+pub struct Product {
+    seq1: Box<dyn Sequence>,  
+    seq2: Box<dyn Sequence> }
 
 
 
-impl<S1, S2> Product<S1, S2> 
-where
-    S1: Sequence<f64>, 
-    S2: Sequence<f64>,  
-{
-    pub fn new(zaporedje1: S1, zaporedje2: S2) -> Product<S1, S2> {
-        Product { zaporedje1, zaporedje2 }
+impl Product {
+    pub fn new(seq1: Box<dyn Sequence>, seq2: Box<dyn Sequence>) -> Box<Product> {
+        Box::new(Product { seq1, seq2 })
     }
 
     pub fn k_th(&self, k: usize) -> f64 {
-        self.zaporedje1.k_th(k) * self.zaporedje2.k_th(k)
+        self.seq1.k_th(k) * self.seq2.k_th(k)
     }
 }

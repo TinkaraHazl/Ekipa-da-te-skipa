@@ -11,7 +11,7 @@ impl Arithmetic {
     }
 }
 
-impl Sequence<f64> for Arithmetic {
+impl Sequence for Arithmetic {
     fn k_th(&self, k: usize) -> f64 {
         self.start + (k as f64) * self.step
     }
