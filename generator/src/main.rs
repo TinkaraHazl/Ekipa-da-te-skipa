@@ -32,9 +32,7 @@ use sequence::product::Product;
 use sequence::sum::Sum;
 use sequence::tribonacci::Tribonacci;
 
-// fn a() {
-//     let k = Geometric::new(1.1,2.);
-// }
+
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
@@ -74,92 +72,91 @@ pub struct SequenceInfo {
 
 fn sequences() -> Vec<SequenceInfo> {
     let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Arithmetic".to_string(),
         description: "Arithmetic sequence".to_string(),
         parameters: 2,
         sequences: 0,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Geometric".to_string(),
         description: "Geometric sequence".to_string(),
         parameters: 2,
         sequences: 0,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Tribonacci".to_string(),
         description: "Tribonacci sequence".to_string(),
         parameters: 3,
         sequences: 0,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Sum".to_string(),
         description: "Sum of two sequences by term".to_string(),
         parameters: 0,
         sequences: 2,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Product".to_string(),
         description: "Product of two sequences by term".to_string(),
         parameters: 0,
         sequences: 2,
     });
+    
     sequences.push(SequenceInfo {
         name: "Mix".to_string(),
-        description: "Generates a new sequence by alternating elements from two 
-        provided sequences. The 'step' parameter determines how many elements
-        from each sequence are included before switching and is rounded to the 
-        greatest integer less than or equal to the input. If 'step' is less
-        than one, the function panics.".to_string(),
+        description: "Generates a new sequence by alternating elements...".to_string(),
         parameters: 1,
         sequences: 2,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Drop".to_string(),
         description: "Dropping the first k terms of a sequence".to_string(),
         parameters: 1,
         sequences: 1,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Lah".to_string(),
-        description: "Generates a sequence of the number of ways a set can be  paritioned into k linearly ordered 
-                    terms, where set size increases by term and k is the parameter chosen.".to_string(),
+        description: "Generates a sequence of the number of ways...".to_string(),
         parameters: 1,
         sequences: 0,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Catalan".to_string(),
         description: "Sequence of Catalan numbers".to_string(),
         parameters: 0,
         sequences: 0,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Base".to_string(),
-        description: "Changes the sequence from one number system to another. Only works for bases from 2 to 10.".to_string(),
+        description: "Changes the sequence from one number system to another...".to_string(),
         parameters: 2,
         sequences: 1,
     });
-    let mut sequences = Vec::new();
+    
     sequences.push(SequenceInfo {
         name: "Aliquot".to_string(),
-        description: "A sequence of positive integers in which each term is the sum of proper divisors of the previous term. ".to_string(),
+        description: "A sequence of positive integers...".to_string(),
         parameters: 1,
         sequences: 0,
     });
-    //sequences.push(SequenceInfo {
-    //    name: "Lin Comb".to_string(),
-    //    description: "".to_string(),
-    //    parameters: 3, 
-    //    sequences: 2,
-    //});
+    
+    sequences.push(SequenceInfo {
+        name: "Constant".to_string(),
+        description: "A sequence that repeats the same value".to_string(),
+        parameters: 1,
+        sequences: 0,
+    });
+    
     sequences
 }
 
@@ -193,17 +190,17 @@ fn empty() -> BoxBody<Bytes, hyper::Error> {
         .boxed()
 }
 
-async fn send_post(url: String, body: String) -> Result<String, reqwest::Error> {
-    let client = reqwest::Client::new();
-    let res = client.post(url).body(body).send().await?.text().await?;
-    return Ok(res);
-}
-
-async fn send_get(url: String) -> Result<String, reqwest::Error> {
-    let client = reqwest::Client::new();
-    let res = client.get(url).send().await?.text().await?;
-    return Ok(res);
-}
+// async fn send_post(url: String, body: String) -> Result<String, reqwest::Error> {
+//     let client = reqwest::Client::new();
+//     let res = client.post(url).body(body).send().await?.text().await?;
+//     return Ok(res);
+// }
+// 
+// async fn send_get(url: String) -> Result<String, reqwest::Error> {
+//     let client = reqwest::Client::new();
+//     let res = client.get(url).send().await?.text().await?;
+//     return Ok(res);
+// }
 
 fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequence>>) -> Option<Box<dyn Sequence>> {
     match name {
@@ -310,22 +307,81 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
     }
 }
 
+
+async fn handle_sequence_request(
+    req: Request<Incoming>, 
+    sequence_info: &SequenceInfo
+) -> Result<Response<BoxBody<Bytes, Error>>, hyper::Error> {
+    // Collect and parse the request body
+    let body = collect_body(req).await?;
+    let request: SequenceRequest = match serde_json::from_str(&body) {
+        Ok(req) => req,
+        Err(e) => {
+            eprintln!("Failed to parse request: {}", e);
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(full(format!("Invalid request: {}", e)))
+                .unwrap());
+        }
+    };
+
+    let range = request.range;
+
+    // Validate and create sub-sequences
+    let sub_sequences: Option<Vec<Box<dyn Sequence>>> = request
+        .sequences
+        .into_iter()
+        .map(|syntax| {
+            create_sequence(
+                &syntax.name,
+                syntax.parameters.clone(),
+                syntax.sequences
+                    .into_iter()
+                    .filter_map(|sub_syntax| {
+                        create_sequence(
+                            &sub_syntax.name,
+                            sub_syntax.parameters.clone(),
+                            vec![],
+                        )
+                    })
+                    .collect::<Vec<Box<dyn Sequence>>>(),
+            )
+        })
+        .collect::<Option<Vec<Box<dyn Sequence>>>>();
+
+    if sub_sequences.is_none() {
+        return Ok(Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(full("Invalid sub-sequences in request".to_string()))
+            .unwrap());
+    }
+
+    // Create the main sequence
+    let sequence = create_sequence(
+        &sequence_info.name,
+        request.parameters,
+        sub_sequences.unwrap(),
+    );
+
+    match sequence {
+        Some(seq) => {
+            let result = serde_json::to_string(&seq.range(range)).unwrap();
+            Ok(Response::new(full(result)))
+        }
+        None => {
+            eprintln!("Failed to create sequence: {}", sequence_info.name);
+            Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(full("Failed to create sequence".to_string()))
+                .unwrap())
+        }
+    }
+}
+
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr: SocketAddr = ([0, 0, 0, 0], PORT).into();
-
-    let b = send_get("http://0.0.0.0:7878/project".to_string()).await?;
-    println!("HERE {}", b);
-
-    let b = send_post(
-        "http://0.0.0.0:7878/project".to_string(),
-        serde_json::to_string(&get_project()).unwrap(),
-    )
-    .await?;
-    println!("HERE {}", b);
-
-    let b = send_get("http://0.0.0.0:7878".to_string()).await?;
-    println!("HERE {}", b);
 
     let listener = TcpListener::bind(addr).await?;
     println!("Listening on http://{}", addr);
@@ -341,40 +397,35 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let io = TokioIo::new(stream);
 
         let service = service_fn(move |req| {
+            let method = req.method().clone();
+            let path = req.uri().path().to_string();
+
             async move {
-                match (req.method(), req.uri().path()) {
-                    (&Method::GET, "/ping") => Ok::<_, Error>(Response::new(full(
+                match (method, path.as_str()) {
+                    // Handle GET /ping
+                    (Method::GET, "/ping") => Ok::<_, Error>(Response::new(full(
                         serde_json::to_string(&get_project()).unwrap(),
                     ))),
-                    (&Method::GET, "/sequence") => {
-                        //
+                    // Handle GET /sequence
+                    (Method::GET, "/sequence") => {
                         let sequences = sequences();
                         Ok(Response::new(full(
                             serde_json::to_string(&sequences).unwrap(),
                         )))
                     }
-                    (&Method::POST, r) => {
-                        let seqs = sequences();
-                        let sequences = seqs
-                            .iter()
-                            .find(|&x| ("/sequence/".to_string() + &x.name) == r);
-                        match sequences {
+                    // Handle POST /sequence/<name>
+                    (Method::POST, path) if path.starts_with("/sequence/") => {
+                        let seq_name = &path["/sequence/".len()..]; // Extract the sequence name
+                        let seq_info = sequences()
+                            .into_iter()
+                            .find(|info| info.name == seq_name);
+
+                        match seq_info {
+                            Some(info) => handle_sequence_request(req, &info).await,
                             None => create_404(),
-                            Some(s) if *s.name == "Arithmetic".to_string() 
-                            => {
-                                let body = collect_body(req).await?;
-                                let request: SequenceRequest = serde_json::from_str(&body).unwrap();
-                                let range = request.range;
-                                let seq =
-                                    Arithmetic::new(request.parameters[0], request.parameters[1]);
-                                Ok(Response::new(full(
-                                    serde_json::to_string(&seq.range(range)).unwrap(),
-                                )))
-                            }
-                            _ => panic!("Not implemented"),
                         }
                     }
-
+                    // Fallback to 404
                     _ => create_404(),
                 }
             }
@@ -385,5 +436,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 }
-
 

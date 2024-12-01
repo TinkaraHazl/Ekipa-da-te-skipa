@@ -19,14 +19,14 @@ impl Mix {
 
 impl Sequence for Mix {
     fn k_th(&self, k: usize) -> f64 {
-        let s = self.step as usize;
-        let q = k / s;
-        let n = k % s;
-        if q % 2 == 0 {
-            self.seq1.k_th((q / 2) * s + n - 1)
-        }
-        else {
-            self.seq2.k_th((q / 2) * s + n - 1)
+        let period = self.step as usize;
+        let sequence_index = (k / period) % 2;
+        let element_index = k / 2;  // This ensures each sequence gets increasing values
+        
+        match sequence_index {
+            0 => self.seq1.k_th(element_index),
+            1 => self.seq2.k_th(element_index),
+            _ => unreachable!(),
         }
     }
 }

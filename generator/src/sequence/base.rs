@@ -18,46 +18,54 @@ impl Sequence for Base {
     }
 }
 
-fn b_to_ten (t: f64, b: usize) -> f64 {
-    let mut s: f64 = 0.0;
-    let mut int: f64 = t.trunc();
-    let mut frac: f64 = t - t.trunc();
-
-    let mut pi = 1.0;
-    while int > 0.0 {
-        let digit = int % 10.0;
-        s += (digit as f64) * ((b as f64).powf(pi));
-        int /= 10.0;
-        pi += 1.0;
-    };
-
-    let mut pf = 1.0;
-    while frac > 0.0 {
-        frac *= 10.0;
-        let digit  = frac.trunc();
-        s += digit / ((b as f64)).powf(-pf);
-        frac -= digit;
-        pf += 1.0
+fn b_to_ten(t: f64, b: usize) -> f64 {
+    if t == 0.0 {
+        return 0.0;
     }
-
-    s
+    
+    let mut result: f64 = 0.0;
+    let mut number = t.abs();
+    
+    let mut digits = Vec::new();
+    while number >= 1.0 {
+        digits.push((number % 10.0).floor());
+        number = (number / 10.0).floor();
+    }
+    
+    for (i, &digit) in digits.iter().enumerate() {
+        result += digit * (b as f64).powi(i as i32);
+    }
+    
+    if t < 0.0 {
+        result = -result;
+    }
+    
+    result
 }
 
-fn ten_to_b (t: f64, n: usize) -> f64 {
-    let mut s: f64 = 0.0;
-    let mut int_t = t.trunc();
-    let mut frac_t = t - int_t;
-
-    while int_t > 0.0 {
-        s += int_t % (n as f64);
-        int_t /= n as f64
+fn ten_to_b(t: f64, n: usize) -> f64 {
+    if t == 0.0 {
+        return 0.0;
     }
-
-    for i in 1..11 {
-        s += ((frac_t * (n as f64)) / 1.0).powi(-i);
-        frac_t = (frac_t * (n as f64)) % 1.0
+    
+    let mut number = t.abs().floor() as i64;
+    let mut digits = Vec::new();
+    
+    while number > 0 {
+        digits.push(number % n as i64);
+        number /= n as i64;
     }
-    s
+    
+    let mut result = 0.0;
+    for (i, &digit) in digits.iter().enumerate() {
+        result += (digit as f64) * 10.0_f64.powi(i as i32);
+    }
+    
+    if t < 0.0 {
+        result = -result;
+    }
+    
+    result
 }
 
 //#[cfg(test)]
