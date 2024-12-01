@@ -34,7 +34,7 @@ use sequence::tribonacci::Tribonacci;
 
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Project {
     pub name: String,
     pub ip: String,
