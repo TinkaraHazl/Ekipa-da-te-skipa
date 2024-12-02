@@ -255,7 +255,7 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
             }
         }
         "Mix" => {
-            if parameters.len() >= 2 && sequences.len() == 2 {
+            if parameters.len() == 2 && sequences.len() == 2 {
                 let mut iter = sequences.into_iter();
                 let seq1 = iter.next()?; // First element
                 let seq2 = iter.next()?; // Second element

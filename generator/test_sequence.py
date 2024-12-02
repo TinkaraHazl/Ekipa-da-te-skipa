@@ -18,7 +18,7 @@ for project in projects:
                 "to": 30,
                 "step": 1
             },
-            "parameters": [3, 2, 10],
+            "parameters": [3, 5],
             "sequences": [
                 {"name": "Constant", "parameters": [10], "sequences": []},
                 {"name": "Sum", "parameters": [], "sequences": [
