@@ -1,6 +1,6 @@
 # Projektna naloga pri predmetu Programiranje 2 na FMF
 ## Delovanje projekta
-Projekt implementira generator različnih zaporedij, predstavljenih spodaj, in strežnik, preko katerega lahko zahtevamo različne tipe zaporedij.
+Projekt implementira generator različnih zaporedij, predstavljenih spodaj, in strežnik, preko katerega lahko zahtevamo zaporedja.
 
 ## Zagon projekta
 Projekt poženemo tako, da prvo zaženemo Register z ukazom `Cargo run`. Nato zaženemo Generator z ukazom `cargo run -- 127.0.0.1:7878 127.0.0.1 12345`.
@@ -18,7 +18,7 @@ Za poizvedbo uporabimo Python program v obliki JSON:
             "sequences": seznam zaporedij oblike {"name": _, "parameters": seznam parametrov, "sequences": seznam zaporedij},
             ]
             }
-      response = requests.post(f"{base_url}/sequence/Base", json=body)
+      response = requests.post(f"{base_url}/sequence/tip_sekvence", json=body)
   
 
 ## Implementriana zaporedja
