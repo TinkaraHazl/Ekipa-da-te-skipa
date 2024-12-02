@@ -1,5 +1,4 @@
 use std::net::SocketAddr;
-use std::env;
 
 use bytes::Bytes;
 use http_body_util::{combinators::BoxBody, BodyExt, Empty, Full};
@@ -198,17 +197,17 @@ fn empty() -> BoxBody<Bytes, hyper::Error> {
         .boxed()
 }
 
-// async fn send_post(url: String, body: String) -> Result<String, reqwest::Error> {
-//     let client = reqwest::Client::new();
-//     let res = client.post(url).body(body).send().await?.text().await?;
-//     return Ok(res);
-// }
-// 
-// async fn send_get(url: String) -> Result<String, reqwest::Error> {
-//     let client = reqwest::Client::new();
-//     let res = client.get(url).send().await?.text().await?;
-//     return Ok(res);
-// }
+async fn send_post(url: String, body: String) -> Result<String, reqwest::Error> {
+    let client = reqwest::Client::new();
+    let res = client.post(url).body(body).send().await?.text().await?;
+    return Ok(res);
+}
+
+async fn send_get(url: String) -> Result<String, reqwest::Error> {
+    let client = reqwest::Client::new();
+    let res = client.get(url).send().await?.text().await?;
+    return Ok(res);
+}
 
 fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequence>>) -> Option<Box<dyn Sequence>> {
     match name {
@@ -266,7 +265,7 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
                 let mut iter = sequences.into_iter();
                 let seq1 = iter.next()?; // First element
                 let seq2 = iter.next()?; // Second element
-                Some(Mix::new(seq1, seq2, parameters[0], parameters[1])) // Use first two parameters
+                Some(Mix::new(seq1, seq2, parameters[0], parameters[1])) // Pass ownership to `SomeSequence::new`
             } else {
                 None
             }
@@ -386,67 +385,11 @@ async fn handle_sequence_request(
     }
 }
 
-fn format_sequence_output(values: Vec<f64>) -> String {
-    values
-        .iter()
-        .map(|x| format!("{:.1}", x))
-        .collect::<Vec<_>>()
-        .join("\n")
-}
-
-async fn register_with_registry(registry_url: &str, project: &Project) -> Result<(), Box<dyn std::error::Error>> {
-    let client = reqwest::Client::new();
-    println!("Sending registration request to: http://{}/project", registry_url);  // Add this debug line
-    let response = client
-        .post(format!("http://{}/project", registry_url))
-        .json(project)
-        .send()
-        .await?;
-
-    println!("Registration response status: {}", response.status());  // Add this debug line
-    if !response.status().is_success() {
-        return Err(format!("Failed to register with registry: {}", response.status()).into());
-    }
-    Ok(())
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Get command line arguments
-    let args: Vec<String> = env::args().collect();
-    
-    // Parse arguments: cargo run -- REGISTRY_IP GENERATOR_IP PORT
-    let registry_url = args.get(1).map(|s| s.as_str()).unwrap_or("127.0.0.1:7878");
-    let generator_ip = args.get(2).map(|s| s.as_str()).unwrap_or("0.0.0.0");
-    let generator_port = args.get(3)
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(PORT);
+    let addr: SocketAddr = ([0, 0, 0, 0], PORT).into();
 
-    println!("Starting generator with:");
-    println!("Registry URL: {}", registry_url);
-    println!("Generator IP: {}", generator_ip);
-    println!("Generator Port: {}", generator_port);
-
-    // Create project info for registration
-    let project = Project {
-        name: format!("Jaka & Tinkara {}", generator_port),  // Add port number to make name unique
-        ip: generator_ip.to_string(),
-        port: generator_port,
-    };
-
-    // Register with the registry
-    println!("Project details: {:?}", project);  // Add this debug line
-    println!("Registering with registry at {}", registry_url);
-    match register_with_registry(registry_url, &project).await {
-        Ok(_) => println!("Successfully registered with registry"),
-        Err(e) => {
-            eprintln!("Failed to register with registry: {}", e);
-            eprintln!("Registration URL: http://{}/project", registry_url);  // Add this debug line
-        }
-    }
-
-    // Create socket address
-    let addr: SocketAddr = format!("{}:{}", generator_ip, generator_port).parse()?;
     let listener = TcpListener::bind(addr).await?;
     println!("Listening on http://{}", addr);
 
@@ -466,29 +409,60 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             async move {
                 match (method, path.as_str()) {
-                    // Handle GET /ping
-                    (Method::GET, "/ping") => Ok::<_, Error>(Response::new(full(
-                        serde_json::to_string(&get_project()).unwrap(),
-                    ))),
+                    // Handle both /ping and /ping/ endpoints
+                    (Method::GET, "/ping") | (Method::GET, "/ping/") => {
+                        let project = get_project();
+                        Ok::<_, Error>(Response::new(full(
+                            serde_json::to_string(&project).unwrap(),
+                        )))
+                    },
                     // Handle GET /sequence
                     (Method::GET, "/sequence") => {
                         let sequences = sequences();
+                        
+                        // Try to get sequences from another generator
+                        match send_get("http://other-generator:port/sequence".to_string()).await {
+                            Ok(other_sequences) => {
+                                println!("Got sequences from other generator: {}", other_sequences);
+                                // You could combine sequences here if needed
+                            },
+                            Err(e) => println!("Could not get sequences from other generator: {}", e),
+                        }
+                        
                         Ok(Response::new(full(
                             serde_json::to_string(&sequences).unwrap(),
                         )))
-                    }
+                    },
                     // Handle POST /sequence/<name>
                     (Method::POST, path) if path.starts_with("/sequence/") => {
-                        let seq_name = &path["/sequence/".len()..]; // Extract the sequence name
+                        let seq_name = &path["/sequence/".len()..];
+                        
+                        // Check name length limit
+                        if seq_name.len() > 256 || !seq_name.chars().all(|c| c.is_alphanumeric()) {
+                            return Ok(Response::builder()
+                                .status(StatusCode::BAD_REQUEST)
+                                .body(full("Invalid sequence name".to_string()))
+                                .unwrap());
+                        }
+                        
                         let seq_info = sequences()
                             .into_iter()
                             .find(|info| info.name == seq_name);
-
+                
                         match seq_info {
                             Some(info) => handle_sequence_request(req, &info).await,
-                            None => create_404(),
+                            None => {
+                                // Try to get sequence from another generator
+                                match send_post(
+                                    format!("http://other-generator:port/sequence/{}", seq_name),
+                                    collect_body(req).await?.to_string()
+                                ).await {
+                                    Ok(response) => Ok(Response::new(full(response))),
+                                    Err(_) => create_404(),
+                                }
+                            },
                         }
-                    }
+                    },
                     // Fallback to 404
                     _ => create_404(),
                 }

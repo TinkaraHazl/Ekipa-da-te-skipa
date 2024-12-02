@@ -67,12 +67,3 @@ fn ten_to_b(t: f64, n: usize) -> f64 {
     
     result
 }
-
-//#[cfg(test)]
-//mod tests {
-//    #[test]
-//    fn ten_to_b() {
-//        let result = ten_to_b(3.0, 2);
-//        assert_eq!(result, 11.0)
-//    }
-//}
