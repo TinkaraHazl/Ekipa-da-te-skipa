@@ -312,7 +312,6 @@ async fn handle_sequence_request(
     req: Request<Incoming>, 
     sequence_info: &SequenceInfo
 ) -> Result<Response<BoxBody<Bytes, Error>>, hyper::Error> {
-    // Collect and parse the request body
     let body = collect_body(req).await?;
     let request: SequenceRequest = match serde_json::from_str(&body) {
         Ok(req) => req,
@@ -327,7 +326,6 @@ async fn handle_sequence_request(
 
     let range = request.range;
 
-    // Validate and create sub-sequences
     let sub_sequences: Option<Vec<Box<dyn Sequence>>> = request
         .sequences
         .into_iter()
@@ -356,7 +354,6 @@ async fn handle_sequence_request(
             .unwrap());
     }
 
-    // Create the main sequence
     let sequence = create_sequence(
         &sequence_info.name,
         request.parameters,
@@ -409,11 +406,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             serde_json::to_string(&project).unwrap(),
                         )))
                     },
-                    // Handle GET /sequence
+
                     (Method::GET, "/sequence") => {
                         let sequences = sequences();
                         
-                        // Try to get sequences from another generator
                         match send_get("http://other-generator:port/sequence".to_string()).await {
                             Ok(other_sequences) => {
                                 println!("Got sequences from other generator: {}", other_sequences);
@@ -426,11 +422,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             serde_json::to_string(&sequences).unwrap(),
                         )))
                     },
-                    // Handle POST /sequence/<name>
                     (Method::POST, path) if path.starts_with("/sequence/") => {
                         let seq_name = &path["/sequence/".len()..];
                         
-                        // Check name length limit
                         if seq_name.len() > 256 || !seq_name.chars().all(|c| c.is_alphanumeric()) {
                             return Ok(Response::builder()
                                 .status(StatusCode::BAD_REQUEST)
@@ -456,7 +450,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             },
                         }
                     },
-                    // Fallback to 404
                     _ => create_404(),
                 }
             }

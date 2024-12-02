@@ -15,11 +15,9 @@ impl Lah {
 impl Sequence for Lah {
     fn k_th(&self, k: usize) -> f64 {
         let m = self.m as usize;
-        // Lah numbers are only defined for k >= m
         if k < m {
             return 0.0;
         }
-        // L(k,m) = k! * C(k-1,m-1) / m!
         let numerator = factorial(k as f64);
         let denominator = factorial(m as f64);
         let combination = factorial((k-1) as f64) / 
