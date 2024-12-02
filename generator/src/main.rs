@@ -111,8 +111,12 @@ fn sequences() -> Vec<SequenceInfo> {
     
     sequences.push(SequenceInfo {
         name: "Mix".to_string(),
-        description: "Generates a new sequence by alternating elements...".to_string(),
-        parameters: 1,
+        description: "Generates a new sequence by alternating elements from two 
+        provided sequences. The 'step' parameter determines how many elements
+        from each sequence are included before switching and is rounded to the 
+        greatest integer less than or equal to the input. If 'step' is less
+        than one, the function panics.".to_string(),
+        parameters: 2,
         sequences: 2,
     });
     
@@ -125,7 +129,8 @@ fn sequences() -> Vec<SequenceInfo> {
     
     sequences.push(SequenceInfo {
         name: "Lah".to_string(),
-        description: "Generates a sequence of the number of ways...".to_string(),
+        description: "Generates a sequence of the number of ways a set can be  paritioned into k linearly ordered 
+                    terms, where set size increases by term and k is the parameter chosen.".to_string(),
         parameters: 1,
         sequences: 0,
     });
@@ -139,14 +144,16 @@ fn sequences() -> Vec<SequenceInfo> {
     
     sequences.push(SequenceInfo {
         name: "Base".to_string(),
-        description: "Changes the sequence from one number system to another...".to_string(),
+        description: "Changes the sequence from one number system to another. 
+                    Only works for bases from 2 to 10.".to_string(),
         parameters: 2,
         sequences: 1,
     });
     
     sequences.push(SequenceInfo {
         name: "Aliquot".to_string(),
-        description: "A sequence of positive integers...".to_string(),
+        description: "A sequence of positive integers in 
+        which each term is the sum of proper divisors of the previous term. ".to_string(),
         parameters: 1,
         sequences: 0,
     });
@@ -255,7 +262,7 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
             }
         }
         "Mix" => {
-            if parameters.len() >= 2 && sequences.len() == 2 {
+            if parameters.len() == 2 && sequences.len() == 2 {
                 let mut iter = sequences.into_iter();
                 let seq1 = iter.next()?; // First element
                 let seq2 = iter.next()?; // Second element
