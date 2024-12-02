@@ -111,7 +111,7 @@ fn sequences() -> Vec<SequenceInfo> {
     sequences.push(SequenceInfo {
         name: "Mix".to_string(),
         description: "Generates a new sequence by alternating elements from two 
-        provided sequences. The 'step' parameter determines how many elements
+        provided sequences. The 'step' parameters determine how many elements
         from each sequence are included before switching and is rounded to the 
         greatest integer less than or equal to the input. If 'step' is less
         than one, the function panics.".to_string(),
