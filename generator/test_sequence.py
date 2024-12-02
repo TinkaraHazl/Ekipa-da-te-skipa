@@ -18,18 +18,18 @@ for project in projects:
                 "to": 30,
                 "step": 1
             },
-            "parameters": [3, 5],
+            "parameters": [3, 2, 10],
             "sequences": [
                 {"name": "Constant", "parameters": [10], "sequences": []},
-                {"name": "Sum", "parameters": [], "sequences": [
-                    {"name": "Arithmetic", "parameters": [5, 10], "sequences": []},
-                    {"name": "Constant", "parameters": [10], "sequences": []}
-                ]}
+                #{"name": "Sum", "parameters": [], "sequences": [
+                #    {"name": "Arithmetic", "parameters": [5, 10], "sequences": []},
+                #    {"name": "Constant", "parameters": [10], "sequences": []}
+                #]}
             ]
         }
         
         # Send request to Mix sequence
-        response = requests.post(f"{base_url}/sequence/Mix", json=body)
+        response = requests.post(f"{base_url}/sequence/Base", json=body)
         print("Response status:", response.status_code)
         print("Sequence result:", response.json())
         break
