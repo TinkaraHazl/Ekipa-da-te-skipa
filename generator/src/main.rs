@@ -190,17 +190,17 @@ fn empty() -> BoxBody<Bytes, hyper::Error> {
         .boxed()
 }
 
-// async fn send_post(url: String, body: String) -> Result<String, reqwest::Error> {
-//     let client = reqwest::Client::new();
-//     let res = client.post(url).body(body).send().await?.text().await?;
-//     return Ok(res);
-// }
-// 
-// async fn send_get(url: String) -> Result<String, reqwest::Error> {
-//     let client = reqwest::Client::new();
-//     let res = client.get(url).send().await?.text().await?;
-//     return Ok(res);
-// }
+async fn send_post(url: String, body: String) -> Result<String, reqwest::Error> {
+    let client = reqwest::Client::new();
+    let res = client.post(url).body(body).send().await?.text().await?;
+    return Ok(res);
+}
+
+async fn send_get(url: String) -> Result<String, reqwest::Error> {
+    let client = reqwest::Client::new();
+    let res = client.get(url).send().await?.text().await?;
+    return Ok(res);
+}
 
 fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequence>>) -> Option<Box<dyn Sequence>> {
     match name {
@@ -402,29 +402,60 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             async move {
                 match (method, path.as_str()) {
-                    // Handle GET /ping
-                    (Method::GET, "/ping") => Ok::<_, Error>(Response::new(full(
-                        serde_json::to_string(&get_project()).unwrap(),
-                    ))),
+                    // Handle both /ping and /ping/ endpoints
+                    (Method::GET, "/ping") | (Method::GET, "/ping/") => {
+                        let project = get_project();
+                        Ok::<_, Error>(Response::new(full(
+                            serde_json::to_string(&project).unwrap(),
+                        )))
+                    },
                     // Handle GET /sequence
                     (Method::GET, "/sequence") => {
                         let sequences = sequences();
+                        
+                        // Try to get sequences from another generator
+                        match send_get("http://other-generator:port/sequence".to_string()).await {
+                            Ok(other_sequences) => {
+                                println!("Got sequences from other generator: {}", other_sequences);
+                                // You could combine sequences here if needed
+                            },
+                            Err(e) => println!("Could not get sequences from other generator: {}", e),
+                        }
+                        
                         Ok(Response::new(full(
                             serde_json::to_string(&sequences).unwrap(),
                         )))
-                    }
+                    },
                     // Handle POST /sequence/<name>
                     (Method::POST, path) if path.starts_with("/sequence/") => {
-                        let seq_name = &path["/sequence/".len()..]; // Extract the sequence name
+                        let seq_name = &path["/sequence/".len()..];
+                        
+                        // Check name length limit
+                        if seq_name.len() > 256 || !seq_name.chars().all(|c| c.is_alphanumeric()) {
+                            return Ok(Response::builder()
+                                .status(StatusCode::BAD_REQUEST)
+                                .body(full("Invalid sequence name".to_string()))
+                                .unwrap());
+                        }
+                        
                         let seq_info = sequences()
                             .into_iter()
                             .find(|info| info.name == seq_name);
-
+                
                         match seq_info {
                             Some(info) => handle_sequence_request(req, &info).await,
-                            None => create_404(),
+                            None => {
+                                // Try to get sequence from another generator
+                                match send_post(
+                                    format!("http://other-generator:port/sequence/{}", seq_name),
+                                    collect_body(req).await?.to_string()
+                                ).await {
+                                    Ok(response) => Ok(Response::new(full(response))),
+                                    Err(_) => create_404(),
+                                }
+                            },
                         }
-                    }
+                    },
                     // Fallback to 404
                     _ => create_404(),
                 }
