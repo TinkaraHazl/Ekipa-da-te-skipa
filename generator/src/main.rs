@@ -1,5 +1,5 @@
 use std::net::SocketAddr;
-
+use std::net::IpAddr;
 use bytes::Bytes;
 use http_body_util::{combinators::BoxBody, BodyExt, Empty, Full};
 use hyper::body::Incoming;
@@ -12,7 +12,9 @@ use tokio::net::TcpListener;
 
 use serde::{Deserialize, Serialize};
 
-const PORT: u16 = 12345;
+const DEFAULT_REG: &str = "0.0.0.0";
+const DEFAULT_PORT: u16 = 9000;
+const DEFAULT_IP: &str = "127.0.0.1";
 
 pub mod sequence;
 
@@ -69,6 +71,8 @@ pub struct SequenceInfo {
     parameters: u32,
     sequences: u32,
 }
+
+
 
 fn sequences() -> Vec<SequenceInfo> {
     let mut sequences = Vec::new();
@@ -167,12 +171,12 @@ fn sequences() -> Vec<SequenceInfo> {
     sequences
 }
 
-fn get_project() -> Project {
-    return Project {
+fn get_project(ip: &str, port: u16) -> Project {
+    Project {
         name: "Jaka & Tinkara".to_string(),
-        ip: "0.0.0.0".to_string(),
-        port: PORT,
-    };
+        ip: ip.to_string(),
+        port: port,
+    }
 }
 
 fn full<T: Into<Bytes>>(chunk: T) -> BoxBody<Bytes, hyper::Error> {
@@ -382,11 +386,30 @@ async fn handle_sequence_request(
     }
 }
 
+fn parse_args() -> (String, String, u16) {
+    let args: Vec<String> = std::env::args().collect();
+    
+    let registry_ip = args.get(1)
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| DEFAULT_REG.to_string());
+        
+    let generator_ip = args.get(2)
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| DEFAULT_IP.to_string());
+        
+    let port = args.get(3)
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(DEFAULT_PORT);
+        
+    (registry_ip, generator_ip, port)
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr: SocketAddr = ([0, 0, 0, 0], PORT).into();
-
+    let (registry_ip, generator_ip, port) = parse_args();
+    
+    let addr: SocketAddr = (generator_ip.parse::<IpAddr>().unwrap(), port).into();
+    
     let listener = TcpListener::bind(addr).await?;
     println!("Listening on http://{}", addr);
 
@@ -400,20 +423,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let (stream, _) = listener.accept().await?;
         let io = TokioIo::new(stream);
 
+        let generator_ip = generator_ip.clone();
+
         let service = service_fn(move |req| {
             let method = req.method().clone();
             let path = req.uri().path().to_string();
 
+            let generator_ip = generator_ip.clone();
+
             async move {
                 match (method, path.as_str()) {
-                    // Handle both /ping and /ping/ endpoints
                     (Method::GET, "/ping") | (Method::GET, "/ping/") => {
-                        let project = get_project();
+                        let project = get_project(&generator_ip, port);
                         Ok::<_, Error>(Response::new(full(
                             serde_json::to_string(&project).unwrap(),
                         )))
                     },
-
                     (Method::GET, "/sequence") => {
                         let sequences = sequences();
                         

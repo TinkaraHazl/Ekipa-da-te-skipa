@@ -3,23 +3,24 @@
 Projekt implementira generator različnih zaporedij, predstavljenih spodaj, in strežnik, preko katerega lahko zahtevamo različne tipe zaporedij.
 
 ## Zagon projekta
-Projekt poženemo tako, da prvo zaženemo Register z ukazom `Cargo run`. Nato zaženemo Generator z ukazom `cargo run -- 127.0.0.1:7878 127.0.0.1 12345`.
-Za poizvedbo uporabimo Python program v obliki JSON:
-
-
+Projekt poženemo tako, da najprej zaženemo register z ukazom `Cargo run`. Nato zaženemo generator z ukazom `cargo run -- -- IP_REGISTRA IP_GENERATORJA PORT`, kjer so privzete vrednosti `IP_REGISTRA=0.0.0.0`, `IP_GENERATORJA=127.0.0.1` in `PORT=9000`.
+Za poizvedbo uporabimo Python program, ki sprejme poizvedbo za zaporedje v obliki JSON:
+```python
+import requests
+def poizvedba
     body = {
-
             "range": {
                 "from": _,
                 "to": _,
                 "step": _
             },
             "parameters": seznam parametrov,
-            "sequences": seznam zaporedij oblike {"name": _, "parameters": seznam parametrov, "sequences": seznam zaporedij},
-            ]
+            "sequences": seznam zaporedij oblike [{"name": _, "parameters": seznam parametrov, "sequences": seznam zaporedij}],
             }
-      response = requests.post(f"{base_url}/sequence/Base", json=body)
-  
+      response = requests.post("URL/sequence/ImeZaporedja", json=body)
+poizvedba()
+```
+Primer poizvedbe je prikazan v Python datoteki `test.py`.
 
 ## Implementriana zaporedja
 - **Konstantno**
@@ -47,7 +48,7 @@ Za poizvedbo uporabimo Python program v obliki JSON:
   - Število parametrov: 0
   - Število zaporedij: 2
 - **Mix**
- vrne zaporedje, ki izmenjuje elemente prvega in drugega zaporedja. Prvi parameter poda, koliko členov prvega zaporedja je vključenih, preden zamenjamo na elemente drugega zaporedja, drugi pa,  koliko členov drugega zaporedja bo vključenih, preden zamenjamo na prvega.
+ vrne zaporedje, ki izmenjuje elemente prvega in drugega zaporedja. Prvi parameter poda, koliko členov prvega zaporedja je vključenih, preden preklopimo na elemente drugega zaporedja, drugi pa,  koliko členov drugega zaporedja bo vključenih, preden preklopimo na elemente prvega.
   - Število parametrov: 2
   - Število zaporedij: 2
 - **Drop**
