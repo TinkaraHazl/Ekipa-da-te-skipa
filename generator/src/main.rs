@@ -12,10 +12,6 @@ use tokio::net::TcpListener;
 
 use serde::{Deserialize, Serialize};
 
-const DEFAULT_REG: &str = "127.0.0.1";
-const DEFAULT_PORT: u16 = 9000;
-const DEFAULT_IP: &str = "127.0.0.1";
-
 pub mod sequence;
 
 use crate::sequence::Sequence;
@@ -253,7 +249,6 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
                 None
             }
         }
-
         "Product" => {
             if parameters.is_empty() && sequences.len() == 2 {
                 let mut iter = sequences.into_iter();
@@ -274,7 +269,6 @@ fn create_sequence(name: &str, parameters: Vec<f64>, sequences: Vec<Box<dyn Sequ
                 None
             }
         }
-
         "Drop" => {
             if parameters.len() == 1 && sequences.len() == 1 {
                 let mut iter = sequences.into_iter();
@@ -408,13 +402,12 @@ fn parse_args() -> (String, String, u16) {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (registry_ip, generator_ip, port) = parse_args();
     
-    // Create SocketAddr using the parsed port, not hardcoded 7878
+
     let addr: SocketAddr = (generator_ip.parse::<IpAddr>().unwrap(), port).into();
     
     let listener = TcpListener::bind(addr).await?;
     println!("Listening on http://{}", addr);
 
-    // Registration with registry
     let registry_url = format!("http://{}:7878/project", registry_ip);  // Changed from /register to /project
 
     let project = get_project(&generator_ip, port);
