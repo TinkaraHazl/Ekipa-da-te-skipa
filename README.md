@@ -3,7 +3,7 @@
 Projekt implementira generator različnih zaporedij, predstavljenih spodaj, in strežnik, preko katerega lahko zahtevamo zaporedja.
 
 ## Zagon projekta
-Projekt poženemo tako, da najprej zaženemo register z ukazom `cargo run`. Nato zaženemo generator z ukazom `cargo run -- -- IP_REGISTRA IP_GENERATORJA PORT`, kjer so privzete vrednosti `IP_REGISTRA=0.0.0.0`, `IP_GENERATORJA=127.0.0.1` in `PORT=9000`.
+Projekt poženemo tako, da v terminalu najprej zaženemo register z ukazom `cargo run`. Nato v ločenem terminalui zaženemo generator z ukazom `cargo run -- -- IP_REGISTRA IP_GENERATORJA PORT`, kjer so privzete vrednosti `IP_REGISTRA=0.0.0.0`, `IP_GENERATORJA=127.0.0.1` in `PORT=9000`.
 Za poizvedbo uporabimo Python program, ki sprejme poizvedbo za zaporedje v obliki JSON:
 ```python
 import requests
