@@ -12,7 +12,7 @@ use tokio::net::TcpListener;
 
 use serde::{Deserialize, Serialize};
 
-const DEFAULT_REG: &str = "0.0.0.0";
+const DEFAULT_REG: &str = "127.0.0.1";
 const DEFAULT_PORT: u16 = 9000;
 const DEFAULT_IP: &str = "127.0.0.1";
 
@@ -391,15 +391,15 @@ fn parse_args() -> (String, String, u16) {
     
     let registry_ip = args.get(1)
         .map(|s| s.to_string())
-        .unwrap_or_else(|| DEFAULT_REG.to_string());
+        .unwrap_or_else(|| "127.0.0.1".to_string());
         
     let generator_ip = args.get(2)
         .map(|s| s.to_string())
-        .unwrap_or_else(|| DEFAULT_IP.to_string());
+        .unwrap_or_else(|| "127.0.0.1".to_string());
         
     let port = args.get(3)
         .and_then(|s| s.parse().ok())
-        .unwrap_or(DEFAULT_PORT);
+        .unwrap_or(9000);  // Default port is 9000
         
     (registry_ip, generator_ip, port)
 }
@@ -408,11 +408,22 @@ fn parse_args() -> (String, String, u16) {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (registry_ip, generator_ip, port) = parse_args();
     
+    // Create SocketAddr using the parsed port, not hardcoded 7878
     let addr: SocketAddr = (generator_ip.parse::<IpAddr>().unwrap(), port).into();
     
     let listener = TcpListener::bind(addr).await?;
     println!("Listening on http://{}", addr);
 
+    // Registration with registry
+    let registry_url = format!("http://{}:7878/project", registry_ip);  // Changed from /register to /project
+
+    let project = get_project(&generator_ip, port);
+    let client = reqwest::Client::new();
+    let res = client.post(&registry_url)
+        .json(&project)
+        .send()
+        .await?;
+    println!("Registration response: {:?}", res.status());
     let create_404 = || {
         let mut not_found = Response::new(empty());
         *not_found.status_mut() = StatusCode::NOT_FOUND;

@@ -1,8 +1,9 @@
 import requests
 
-# Print all projects found in registry
 print("Checking registry...")
-projects = requests.get("http://127.0.0.1:7878/project").json()
+response = requests.get("http://127.0.0.1:7878/project")
+print("Response text:", response.text)
+projects = response.json()
 print("Found projects:", projects)
 
 for project in projects:
@@ -11,27 +12,22 @@ for project in projects:
         base_url = f"http://{project['ip']}:{project['port']}"
         print(f"Found generator at {base_url}")
         
-        # Test the complex sequence
+        # Test with a simple Arithmetic sequence
         body = {
             "range": {
                 "from": 0,
-                "to": 30,
+                "to": 5,
                 "step": 1
             },
-            "parameters": [3, 2, 10],
-            "sequences": [
-                {"name": "Constant", "parameters": [10], "sequences": []},
-                #{"name": "Sum", "parameters": [], "sequences": [
-                #    {"name": "Arithmetic", "parameters": [5, 10], "sequences": []},
-                #    {"name": "Constant", "parameters": [10], "sequences": []}
-                #]}
-            ]
+            "parameters": [1, 2],  # Start at 1, add 2 each time
+            "sequences": []
         }
         
-        # Send request to Mix sequence
-        response = requests.post(f"{base_url}/sequence/Base", json=body)
+        response = requests.post(f"{base_url}/sequence/Arithmetic", json=body)
         print("Response status:", response.status_code)
-        print("Sequence result:", response.json())
+        print("Response text:", response.text)
+        if response.status_code == 200:
+            print("Sequence result:", response.json())
         break
 else:
     print("Generator not found")
